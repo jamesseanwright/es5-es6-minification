@@ -1,0 +1,21 @@
+{
+  "name": "es5-es6-minification",
+  "version": "0.0.1",
+  "description": "Which will result in a smaller bundle - ES5 and Closure Compiler, or ES6 and UglifyJS?",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "javascript",
+    "ecmascript",
+    "closure",
+    "uglify",
+    "minification"
+  ],
+  "author": "James Wright <james@jamesswright.co.uk>",
+  "license": "ISC",
+  "devDependencies": {
+    "mocha": "^3.2.0"
+  }
+}
