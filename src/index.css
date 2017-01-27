@@ -1,3 +1,9 @@
+@font-face {
+    font-family: 'slkscr';
+    src: url('slkscr.ttf');
+    font-weight: normal;
+}
+
 .output {
     background: black;
 }

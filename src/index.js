@@ -3,8 +3,6 @@
 
     var output = document.body.querySelector('.output');
     var buttons = document.body.querySelector('#buttons');
-    var onButton = buttons.querySelector('#on');
-    var offButton = buttons.querySelector('#off');
     var prevButton = buttons.querySelector('#previous-channel');
     var nextButton = buttons.querySelector('#next-channel');
 
@@ -17,14 +15,18 @@
         this.height = height;
         this.context = context;
         this.channel = 1;
-
-        context.fillStyle = 'white';
     }
 
-    Television.prototype.update = function update() {
-        var PIXEL_SIZE = Television.PIXEL_SIZE;
-
+    Television.prototype.render = function render() {
         this.context.clearRect(0, 0, width, height);
+        this._renderPixels();
+        this._renderChannelNumber();
+    };
+
+    Television.prototype._renderPixels = function renderPixels() {
+        var PIXEL_SIZE = Television.PIXEL_SIZE;
+        
+        this.context.fillStyle = 'white';        
 
         for (var x = 0; x < width; x++) {
             for (var y = 0; y < height; y++) {
@@ -35,12 +37,10 @@
         }
     };
 
-    Television.prototype.switchOn = function switchOn() {
-
-    };
-
-    Television.prototype.switchOff = function switchOff() {
-
+    Television.prototype._renderChannelNumber = function _renderChannelNumber() {
+        this.context.fillStyle = 'green';
+        this.context.font = '56px slkscr';
+        this.context.fillText(this.channel, 20, 50);
     };
 
     Television.prototype.changeToPrevChannel = function changeToPrevChannel() {
@@ -52,14 +52,14 @@
     };
 
     Television.prototype._changeChannel = function _changeChannel(type) {
-        var channel = this.chanel + type;
+        var channel = this.channel + type;
 
         if (channel === Television._channelRange.MIN - 1) {
-            channel = 10;
+            channel = Television._channelRange.MAX;
         }
 
         if (channel === Television._channelRange.MAX + 1) {
-            channel = 1;
+            channel = Television._channelRange.MIN;
         }
 
         this.channel = channel;
@@ -76,20 +76,18 @@
 
     Television._channelRange = {
         MIN: 1,
-        MAX: 10
+        MAX: 99
     };
 
     Television.PIXEL_SIZE = 1;
 
     function loop() {
-        television.update();
+        television.render();
         requestAnimationFrame(loop);
     }
 
     television = new Television(width, height, output.getContext('2d'));
     
-    onButton.onclick = television.switchOn.bind(television);
-    offButton.onclick = television.switchOff.bind(television);
     prevButton.onclick = television.changeToPrevChannel.bind(television);
     nextButton.onclick = television.changeToNextChannel.bind(television);
 
