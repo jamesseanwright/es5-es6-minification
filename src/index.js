@@ -47,7 +47,17 @@
     Television.prototype.startNoiseAudio = function startNoiseAudio() {
         var AUDIO_SAMPLE_RATE = Television.AUDIO_SAMPLE_RATE;
         var AUDIO_LENGTH_SECONDS = Television.AUDIO_LENGTH_SECONDS;
+        var bufferSource = this.audioContext.createBufferSource();
+        var gainNode = this.audioContext.createGain();
 
+        bufferSource.buffer = this._createNoiseBuffer();
+        gainNode.gain.value = 0.2;
+        bufferSource.connect(gainNode);
+        gainNode.connect(this.audioContext.destination);
+        bufferSource.start();
+    };
+
+    Television.prototype._createNoiseBuffer = function _createNoiseBuffer() {
         var bufferLength = AUDIO_SAMPLE_RATE * AUDIO_LENGTH_SECONDS;
         var buffer = this.audioContext.createBuffer(1, bufferLength, AUDIO_SAMPLE_RATE);
         var output = buffer.getChannelData(0);
@@ -56,15 +66,8 @@
             output[i] = Math.random();
         }
 
-        var bufferSource = this.audioContext.createBufferSource();
-        var gainNode = this.audioContext.createGain();
-
-        bufferSource.buffer = buffer;
-        gainNode.gain.value = 0.2;
-        bufferSource.connect(gainNode);
-        gainNode.connect(this.audioContext.destination);
-        bufferSource.start();
-    };
+        return output;
+    }
 
     Television.prototype.changeToPrevChannel = function changeToPrevChannel() {
         this._changeChannel(Television._channelChangeTypes.PREV);
