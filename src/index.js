@@ -10,10 +10,11 @@
     var height = output.height;
     var television;
 
-    function Television(width, height, renderContext) {
+    function Television(width, height, renderContext, audioContext) {
         this.width = width;
         this.height = height;
         this.renderContext = renderContext;
+        this.audioContext = audioContext;
         this.channel = 1;
     }
 
@@ -41,6 +42,28 @@
         this.renderContext.fillStyle = 'green';
         this.renderContext.font = '56px slkscr';
         this.renderContext.fillText(this.channel, 20, 50);
+    };
+
+    Television.prototype.startNoiseAudio = function startNoiseAudio() {
+        var AUDIO_SAMPLE_RATE = Television.AUDIO_SAMPLE_RATE;
+        var AUDIO_LENGTH_SECONDS = Television.AUDIO_LENGTH_SECONDS;
+
+        var bufferLength = AUDIO_SAMPLE_RATE * AUDIO_LENGTH_SECONDS;
+        var buffer = this.audioContext.createBuffer(1, bufferLength, AUDIO_SAMPLE_RATE);
+        var output = buffer.getChannelData(0);
+
+        for (var i = 0; i < bufferLength; i++) {
+            output[i] = Math.random();
+        }
+
+        var bufferSource = this.audioContext.createBufferSource();
+        var gainNode = this.audioContext.createGain();
+
+        bufferSource.buffer = buffer;
+        gainNode.gain.value = 0.2;
+        bufferSource.connect(gainNode);
+        gainNode.connect(this.audioContext.destination);
+        bufferSource.start();
     };
 
     Television.prototype.changeToPrevChannel = function changeToPrevChannel() {
@@ -80,17 +103,25 @@
     };
 
     Television.PIXEL_SIZE = 2;
+    Television.AUDIO_SAMPLE_RATE = 44100;
+    Television.AUDIO_LENGTH_SECONDS = 300;
 
     function loop() {
         television.render();
         requestAnimationFrame(loop);
     }
 
-    television = new Television(width, height, output.getContext('2d'));
+    television = new Television(
+        width,
+        height,
+        output.getContext('2d'),
+        new AudioContext()
+    );
 
     prevButton.onclick = television.changeToPrevChannel.bind(television);
     nextButton.onclick = television.changeToNextChannel.bind(television);
 
-    //television.
+    television.startNoiseAudio();
+
     loop();
 }());
