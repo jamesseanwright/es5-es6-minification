@@ -10,37 +10,37 @@
     var height = output.height;
     var television;
 
-    function Television(width, height, context) {
+    function Television(width, height, renderContext) {
         this.width = width;
         this.height = height;
-        this.context = context;
+        this.renderContext = renderContext;
         this.channel = 1;
     }
 
     Television.prototype.render = function render() {
-        this.context.clearRect(0, 0, width, height);
+        this.renderContext.clearRect(0, 0, width, height);
         this._renderPixels();
         this._renderChannelNumber();
     };
 
     Television.prototype._renderPixels = function renderPixels() {
         var PIXEL_SIZE = Television.PIXEL_SIZE;
-        
-        this.context.fillStyle = 'white';        
 
-        for (var x = 0; x < width; x++) {
-            for (var y = 0; y < height; y++) {
+        this.renderContext.fillStyle = 'white';
+
+        for (var x = 0; x < width; x += PIXEL_SIZE) {
+            for (var y = 0; y < height; y += PIXEL_SIZE) {
                 if (Television._shouldFillPixel()) {
-                    this.context.fillRect(x, y, PIXEL_SIZE, PIXEL_SIZE);
+                    this.renderContext.fillRect(x, y, PIXEL_SIZE, PIXEL_SIZE);
                 }
             }
         }
     };
 
     Television.prototype._renderChannelNumber = function _renderChannelNumber() {
-        this.context.fillStyle = 'green';
-        this.context.font = '56px slkscr';
-        this.context.fillText(this.channel, 20, 50);
+        this.renderContext.fillStyle = 'green';
+        this.renderContext.font = '56px slkscr';
+        this.renderContext.fillText(this.channel, 20, 50);
     };
 
     Television.prototype.changeToPrevChannel = function changeToPrevChannel() {
@@ -48,7 +48,7 @@
     };
 
     Television.prototype.changeToNextChannel = function changeToNextChannel() {
-        this._changeChannel(Television._channelChangeTypes.NEXT);        
+        this._changeChannel(Television._channelChangeTypes.NEXT);
     };
 
     Television.prototype._changeChannel = function _changeChannel(type) {
@@ -79,7 +79,7 @@
         MAX: 99
     };
 
-    Television.PIXEL_SIZE = 1;
+    Television.PIXEL_SIZE = 2;
 
     function loop() {
         television.render();
@@ -87,9 +87,10 @@
     }
 
     television = new Television(width, height, output.getContext('2d'));
-    
+
     prevButton.onclick = television.changeToPrevChannel.bind(television);
     nextButton.onclick = television.changeToNextChannel.bind(television);
 
+    //television.
     loop();
 }());
