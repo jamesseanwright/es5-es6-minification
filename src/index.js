@@ -67,7 +67,7 @@
         }
 
         return buffer;
-    }
+    };
 
     Television.prototype.changeToPrevChannel = function changeToPrevChannel() {
         this._changeChannel(Television._channelChangeTypes.PREV);
